@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Szperacz (wersja 16 px)">
+  <title>Szperacz (wersja 16 px)</title>
+  <!-- Uproszczona wersja pod pasek Chrome: grubsza obręcz i rączka, kropka zamiast iskry. -->
+  <rect width="512" height="512" rx="132" fill="#283446"/>
+  <circle cx="222" cy="214" r="122" fill="none" stroke="#FEBD3D" stroke-width="64"/>
+  <g transform="translate(222 214) rotate(45)" fill="#FEBD3D">
+    <rect x="130" y="-34" width="150" height="68" rx="20"/>
+  </g>
+  <circle cx="222" cy="214" r="30" fill="#FEF2CE"/>
+</svg>

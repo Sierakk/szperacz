@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Szperacz",
+  "version": "1.0.0",
+  "description": "Wybierz, jakie kategorie ogłoszeń widzisz w zakładce „Oddam za darmo” na OLX.pl. Szperaj tam, gdzie warto.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage"],
+  "action": {
+    "default_title": "Szperacz",
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.olx.pl/*",
+        "https://olx.pl/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

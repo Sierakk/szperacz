@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Szperacz</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img src="../icons/icon48.png" alt="" width="28" height="28">
+      <h1>Szperacz</h1>
+    </div>
+    <label class="switch" title="Włącz lub wyłącz filtrowanie">
+      <input type="checkbox" id="enabled" aria-label="Włącz filtrowanie">
+      <span class="slider"></span>
+    </label>
+  </header>
+
+  <p class="hint">Pokazuj w „Oddam za darmo” kategorie:</p>
+
+  <ul id="categories"></ul>
+
+  <footer>
+    <button type="button" id="all">Zaznacz wszystkie</button>
+    <button type="button" id="none">Odznacz wszystkie</button>
+  </footer>
+
+  <div class="option">
+    <span id="badges-label">Ukryj etykiety „Wyróżnione”</span>
+    <label class="switch">
+      <input type="checkbox" id="hideBadges" aria-labelledby="badges-label">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <p class="option-hint">Wyłączone: przy ukrytych kategoriach OLX może źle ustawiać etykiety.</p>
+
+  <p class="note">Szperaj tam, gdzie warto.<br>Zmiany działają od razu.</p>
+
+  <script src="popup.js"></script>
+</body>
+</html>

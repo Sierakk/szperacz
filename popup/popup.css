@@ -1,0 +1,115 @@
+/* Paleta Szperacza: Atrament #283446, Bursztyn #FEBD3D, Krem #FEF2CE */
+:root {
+  --bg: #fff8e8;
+  --fg: #283446;
+  --muted: #6b7686;
+  --line: #eadfc4;
+  --accent: #febd3d;
+  --accent-ink: #283446;
+  --track: #cdc3a8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #283446;
+    --fg: #fef2ce;
+    --muted: #a9b3c2;
+    --line: #3a4659;
+    --track: #52607a;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  width: 280px;
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand { display: flex; align-items: center; gap: 8px; }
+.brand img { border-radius: 7px; display: block; box-shadow: 0 0 0 1px var(--line); }
+
+h1 { margin: 0; font-size: 18px; letter-spacing: -0.01em; }
+
+.hint { margin: 12px 0 6px; color: var(--muted); }
+
+ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+
+li label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 2px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+
+li input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+
+body.off ul, body.off .hint, body.off footer, body.off .option, body.off .option-hint {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.option-hint { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+
+footer { display: flex; gap: 8px; margin-top: 12px; }
+
+button {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+button:hover { border-color: var(--accent); }
+
+.note { margin: 12px 0 0; font-size: 12px; color: var(--muted); }
+
+/* przełącznik */
+.switch { position: relative; width: 38px; height: 22px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; inset: 0;
+  background: var(--track);
+  border-radius: 22px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 3px; top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.15s;
+}
+.switch input:checked + .slider { background: var(--accent); }
+.switch input:checked + .slider::before { transform: translateX(16px); background: var(--accent-ink); }
+.switch input:focus-visible + .slider { outline: 2px solid var(--accent); outline-offset: 2px; }
