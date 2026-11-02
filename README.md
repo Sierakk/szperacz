@@ -39,7 +39,10 @@ Następnie kliknij ikonę rozszerzenia, odznacz „Zwierzęta” i wejdź na [ht
 
 Kliknij ikonę rozszerzenia na pasku Chrome. W popupie:
 
-<img src="screenshots/popup.png" alt="Popup Szperacza z listą kategorii i przełącznikami" width="280" align="right">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="screenshots/popup-dark.png">
+  <img src="screenshots/popup-light.png" alt="Popup Szperacza: kategorie w dwóch kolumnach, liczba ukrytych ogłoszeń i przełączniki" width="300" align="right">
+</picture>
 
 - przełącznik w prawym górnym rogu włącza i wyłącza całe filtrowanie,
 - **zaznaczona** kategoria jest pokazywana, **odznaczona** jest ukrywana,
@@ -49,6 +52,10 @@ Kliknij ikonę rozszerzenia na pasku Chrome. W popupie:
 - przełącznik „Licznik ukrytych ogłoszeń” (domyślnie włączony) pokazuje w prawym dolnym rogu listy plakietkę „Szperacz ukryto N ogłoszeń” — licznik aktualizuje się też przy doładowywaniu kart podczas przewijania.
 
 **Kliknięcie plakietki rozwija listę kategorii** z liczbą ogłoszeń w każdej z nich na bieżącej stronie. Kategorie można tam włączać i wyłączać bez otwierania popupu (zmiany zapisują się tak samo jak w popupie); `Esc` zwija listę. Gdy nic nie jest ukryte, plakietka zostaje jako sama nazwa „Szperacz” ze strzałką, żeby lista kategorii była zawsze pod ręką.
+
+<p align="center">
+  <img src="screenshots/counter-open.png" alt="Rozwinięta plakietka Szperacza na liście ogłoszeń OLX: kategorie z liczbą ogłoszeń i checkboxami" width="720">
+</p>
 
 Domyślnie wszystkie kategorie są zaznaczone (widoczne), więc żeby coś ukryć — odznacz to w popupie.
 

@@ -72,6 +72,9 @@ input:focus-visible + .box { outline: 2px solid #febd3d; outline-offset: 2px; }
 const OBSERVER_OPTS = { childList: true, subtree: true };
 
 let settings = DEFAULTS;
+// Dopóki ustawienia nie wczytają się ze storage, niczego nie rysujemy: skrypt startuje w
+// document_start, a z domyślnymi ustawieniami plakietka mignęłaby też tym, kto ją wyłączył.
+let settingsLoaded = false;
 let observer = null;
 let refreshScheduled = false;
 let counterUi = null; // powłoka licznika budowana raz, potem tylko aktualizowana
@@ -246,6 +249,7 @@ function updateCounter(hidden) {
 }
 
 function refresh() {
+  if (!settingsLoaded) return;
   const onFreePage = FREE_PATH.test(location.pathname);
   // Poza stroną „Oddam za darmo” lub przy wyłączonym filtrze nie ruszamy DOM strony.
   if (!settings.enabled || !onFreePage) {
@@ -277,6 +281,7 @@ function scheduleRefresh() {
 const load = () =>
   chrome.storage.sync.get(DEFAULTS).then((saved) => {
     settings = saved;
+    settingsLoaded = true;
     refresh();
   });
 
