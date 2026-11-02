@@ -45,7 +45,7 @@ Kliknij ikonę rozszerzenia na pasku Chrome. W popupie:
 - **zaznaczona** kategoria jest pokazywana, **odznaczona** jest ukrywana,
 - „Zaznacz wszystkie” pokazuje wszystko, „Odznacz wszystkie” ukrywa wszystkie znane kategorie,
 - przełącznik „Ukryj etykiety «Wyróżnione»” (domyślnie włączony) usuwa plakietki „Wyróżnione” z listy, niezależnie od wybranych kategorii,
-- w prawym dolnym rogu strony pokazuje się licznik „Szperacz: ukryto N ogłoszeń” — aktualizuje się też, gdy OLX doładuje kolejne karty podczas przewijania.
+- przełącznik „Pokaż licznik ukrytych ogłoszeń” (domyślnie włączony) pokazuje w prawym dolnym rogu listy „Szperacz: ukryto N ogłoszeń” — licznik aktualizuje się też przy doładowywaniu kart podczas przewijania.
 
 Domyślnie wszystkie kategorie są zaznaczone (widoczne), więc żeby coś ukryć — odznacz to w popupie.
 
@@ -71,22 +71,21 @@ Licznik „Szperacz: ukryto N ogłoszeń” (prawy dolny róg) liczy karty pasuj
 
 ### Decyzje projektowe
 
-- **Skrypt działa na całym `olx.pl`, a nie tylko na `/oddam-za-darmo/`.** Gdyby tak nie było, po wejściu na „Oddam za darmo” z innej podstrony OLX (bez pełnego przeładowania) skryptu by nie było i filtr nie działałby do odświeżenia karty. Sam filtr włącza się tylko wtedy, gdy adres to `/oddam-za-darmo/` albo `/<miasto|fraza>/oddam-za-darmo/`, i reaguje na zmianę podstrony w locie.
-- **Jeden opcjonalny segment przed kategorią.** `FREE_PATH` w [`content.js`](content.js) dopuszcza też adresy typu `/warszawa/oddam-za-darmo/`; kotwica `^` i prowadzący `/` pilnują, żeby głębsze ścieżki (`/a/b/oddam-za-darmo/`) nie włączały filtra.
+- **Skrypt działa na całym `olx.pl`, a nie tylko na `/oddam-za-darmo/`.** Gdyby tak nie było, po wejściu na „Oddam za darmo” z innej podstrony OLX (bez pełnego przeładowania) skryptu by nie było i filtr nie działałby do odświeżenia karty. Sam filtr włącza się tylko wtedy, gdy adres zaczyna się od `/oddam-za-darmo/`, i reaguje na zmianę podstrony w locie.
 - **Etykiety „Wyróżnione” można tylko ukryć wszystkie naraz.** OLX rysuje je w osobnej warstwie, w pozycjach liczonych z numeru karty na liście — nie da się ich powiązać z konkretną kartą, dlatego po ukryciu kart przy wyłączonym przełączniku zostają w pustych miejscach. Z tego powodu przełącznik jest domyślnie włączony.
 
 ## Znane ograniczenia
 
 - Filtruje tylko kategorie główne. Ukrycie „Zwierząt” usuwa też akcesoria (np. „Buda dla psa”) i rośliny akwariowe. Na stronach sprawdzonych ręcznie 80 z 80 ukrytych to psy i koty.
 - Strona dalej ładuje 52 ogłoszenia na stronę, więc po ukryciu zostaje ich mniej.
-- Działa na adresach `/oddam-za-darmo/` oraz z jednym segmentem miasta/frazy przed kategorią (np. `/warszawa/oddam-za-darmo/`); głębsze ścieżki nie są obsługiwane.
+- Działa na adresach zaczynających się od `/oddam-za-darmo/` — co obejmuje też realne warianty OLX z miastem/frazą po kategorii (np. `/oddam-za-darmo/warszawa/`, `/oddam-za-darmo/q-meble/`; zweryfikowane na żywym OLX). Forma `/warszawa/oddam-za-darmo/` na OLX nie istnieje (404).
 - Lista kategorii w popupie obejmuje te zaobserwowane w „Oddam za darmo”; nie ma tam np. Motoryzacji, bo takie ogłoszenia się nie pojawiły.
 - Jeśli OLX zmieni atrybut `data-cy="l-card"` albo format adresu, filtr przestanie działać.
 - Nazwa i logo nie zostały sprawdzone pod kątem dostępności w Chrome Web Store ani znaku towarowego.
 
 ## Roadmapa
 
-- [x] Adresy z miastem lub frazą wyszukiwania (np. `/warszawa/oddam-za-darmo/`) — `FREE_PATH` w [`content.js`](content.js)
+- [x] Adresy z miastem lub frazą wyszukiwania — OLX używa formatu `/oddam-za-darmo/<miasto|fraza>/` (np. `/oddam-za-darmo/warszawa/`), już obsługiwanego przez zakotwiczony `FREE_PATH` w [`content.js`](content.js); zweryfikowane na żywym OLX 2026-11-02
 - [ ] Publikacja w Chrome Web Store
 
 ## Dla dewelopera

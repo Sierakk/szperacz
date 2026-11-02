@@ -1,23 +1,22 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
-const { FREE_PATH, BADGES_SELECTOR, buildCss, plural } = require("../content.js");
+const { FREE_PATH, DEFAULTS, BADGES_SELECTOR, buildCss, plural } = require("../content.js");
 
-test("FREE_PATH: /oddam-za-darmo/ bez i z segmentem miasta/frazy", () => {
+test("FREE_PATH: /oddam-za-darmo/ i realne warianty OLX (miasto/fraza po kategorii)", () => {
   assert.ok(FREE_PATH.test("/oddam-za-darmo/"));
   assert.ok(FREE_PATH.test("/oddam-za-darmo"));
-  assert.ok(FREE_PATH.test("/oddam-za-darmo/2/"));
-  assert.ok(FREE_PATH.test("/warszawa/oddam-za-darmo/"));
-  assert.ok(FREE_PATH.test("/warszawa/oddam-za-darmo"));
-  assert.ok(FREE_PATH.test("/q-szukana-fraza/oddam-za-darmo/"));
+  assert.ok(FREE_PATH.test("/oddam-za-darmo/warszawa/"));
+  assert.ok(FREE_PATH.test("/oddam-za-darmo/q-meble/"));
+  assert.ok(FREE_PATH.test("/oddam-za-darmo/mazowieckie/"));
 });
 
 test("FREE_PATH: pozostałe adresy OLX nie pasują", () => {
   assert.ok(!FREE_PATH.test("/"));
   assert.ok(!FREE_PATH.test("/oferty/"));
+  assert.ok(!FREE_PATH.test("/warszawa/oddam-za-darmo/")); // na żywym OLX 404
   assert.ok(!FREE_PATH.test("/oddam-za-darmo2/"));
   assert.ok(!FREE_PATH.test("/oddam/za-darmo/"));
-  assert.ok(!FREE_PATH.test("/foo/bar/oddam-za-darmo/"));
 });
 
 test("buildCss: wyłączone filtrowanie zwraca pusty CSS", () => {
@@ -57,4 +56,8 @@ test("plural: odmiana rzeczownika „ogłoszenie”", () => {
   assert.equal(plural(12, forms), "ogłoszeń");
   assert.equal(plural(22, forms), "ogłoszenia");
   assert.equal(plural(112, forms), "ogłoszeń");
+});
+
+test("DEFAULTS: licznik ukrytych ogłoszeń domyślnie włączony", () => {
+  assert.equal(DEFAULTS.showCounter, true);
 });

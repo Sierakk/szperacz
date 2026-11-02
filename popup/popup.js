@@ -15,11 +15,12 @@ const CATEGORIES = [
 ];
 
 // W storage trzymamy listę UKRYTYCH kategorii; checkbox w popupie oznacza „pokaż”.
-const DEFAULTS = { enabled: true, hidden: [], hideBadges: true };
+const DEFAULTS = { enabled: true, hidden: [], hideBadges: true, showCounter: true };
 
 const list = document.getElementById("categories");
 const enabledInput = document.getElementById("enabled");
 const badgesInput = document.getElementById("hideBadges");
+const counterInput = document.getElementById("showCounter");
 
 let state = { ...DEFAULTS };
 
@@ -27,6 +28,7 @@ function render() {
   document.body.classList.toggle("off", !state.enabled);
   enabledInput.checked = state.enabled;
   badgesInput.checked = state.hideBadges;
+  counterInput.checked = state.showCounter;
   list.replaceChildren(
     ...CATEGORIES.map(({ id, name }) => {
       const input = document.createElement("input");
@@ -56,6 +58,7 @@ function save(patch) {
 
 enabledInput.addEventListener("change", () => save({ enabled: enabledInput.checked }));
 badgesInput.addEventListener("change", () => save({ hideBadges: badgesInput.checked }));
+counterInput.addEventListener("change", () => save({ showCounter: counterInput.checked }));
 document.getElementById("all").addEventListener("click", () => save({ hidden: [] }));
 document.getElementById("none").addEventListener("click", () =>
   save({ hidden: CATEGORIES.map((c) => c.id) })

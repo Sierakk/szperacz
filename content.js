@@ -4,14 +4,14 @@
 //
 // OLX przechodzi między podstronami bez przeładowania, więc skrypt jest wstrzykiwany
 // na całym olx.pl (inaczej nie byłoby go po wejściu na „Oddam za darmo” z innej strony),
-// a filtr włącza się tylko na adresach typu /oddam-za-darmo/ lub /warszawa/oddam-za-darmo/.
+// a filtr włącza się tylko, gdy aktualny adres zaczyna się od /oddam-za-darmo/
+// (co obejmuje też realne warianty OLX: /oddam-za-darmo/warszawa/, /oddam-za-darmo/q-meble/).
 
 const STYLE_ID = "szperacz-style";
 const COUNTER_ID = "szperacz-counter";
-// Opcjonalny jeden segment przed „oddam-za-darmo" (miasto/fraza: /warszawa/oddam-za-darmo/).
-const FREE_PATH = /^\/(?:[^/]+\/)?oddam-za-darmo(\/|$)/;
+const FREE_PATH = /^\/oddam-za-darmo(\/|$)/;
 // Domyślnie wszystkie kategorie widoczne, a etykiety „Wyróżnione” ukryte.
-const DEFAULTS = { enabled: true, hidden: [], hideBadges: true };
+const DEFAULTS = { enabled: true, hidden: [], hideBadges: true, showCounter: true };
 
 const COUNTER_STYLE =
   "position:fixed;right:12px;bottom:12px;z-index:2147483647;" +
@@ -60,13 +60,20 @@ function countHidden(hidden) {
 }
 
 function apply(state) {
+  const css = buildCss(state);
   let style = document.getElementById(STYLE_ID);
   if (!style) {
+    if (!css) return;
     style = document.createElement("style");
     style.id = STYLE_ID;
     (document.head || document.documentElement).append(style);
   }
-  style.textContent = buildCss(state);
+  if (style.textContent !== css) style.textContent = css;
+}
+
+function removeElement(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
 }
 
 function updateCounter(hidden) {
@@ -87,12 +94,20 @@ function updateCounter(hidden) {
 
 function refresh() {
   const onFreePage = FREE_PATH.test(location.pathname);
-  const active = settings.enabled && onFreePage;
-  const state = { ...settings, enabled: active };
+  // Poza stroną „Oddam za darmo” lub przy wyłączonym filtrze nie ruszamy DOM strony.
+  if (!settings.enabled || !onFreePage) {
+    if (observer) observer.disconnect();
+    removeElement(STYLE_ID);
+    removeElement(COUNTER_ID);
+    if (observer) observer.observe(document.documentElement, OBSERVER_OPTS);
+    return;
+  }
+  const state = { ...settings, enabled: true };
   // Własne zmiany DOM (style, licznik) wykonujemy przy odłączonym obserwatorze.
   if (observer) observer.disconnect();
   apply(state);
-  updateCounter(active ? state.hidden : []);
+  if (state.showCounter) updateCounter(state.hidden);
+  else removeElement(COUNTER_ID);
   if (observer) observer.observe(document.documentElement, OBSERVER_OPTS);
 }
 
