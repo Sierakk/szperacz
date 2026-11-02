@@ -44,7 +44,8 @@ Kliknij ikonę rozszerzenia na pasku Chrome. W popupie:
 - przełącznik w prawym górnym rogu włącza i wyłącza całe filtrowanie,
 - **zaznaczona** kategoria jest pokazywana, **odznaczona** jest ukrywana,
 - „Zaznacz wszystkie” pokazuje wszystko, „Odznacz wszystkie” ukrywa wszystkie znane kategorie,
-- przełącznik „Ukryj etykiety «Wyróżnione»” (domyślnie włączony) usuwa plakietki „Wyróżnione” z listy, niezależnie od wybranych kategorii.
+- przełącznik „Ukryj etykiety «Wyróżnione»” (domyślnie włączony) usuwa plakietki „Wyróżnione” z listy, niezależnie od wybranych kategorii,
+- w prawym dolnym rogu strony pokazuje się licznik „Szperacz: ukryto N ogłoszeń” — aktualizuje się też, gdy OLX doładuje kolejne karty podczas przewijania.
 
 Domyślnie wszystkie kategorie są zaznaczone (widoczne), więc żeby coś ukryć — odznacz to w popupie.
 
@@ -66,23 +67,26 @@ Każdy link do ogłoszenia na OLX zawiera ID kategorii głównej, np. `...-CID10
 
 Tym samym mechanizmem ukrywana jest warstwa etykiet „Wyróżnione” (`[data-olx-listing-item-badge-portal-root]`), jeśli przełącznik w popupie jest włączony. OLX przechodzi między stronami wyników bez przeładowania, a wstrzyknięty CSS od razu obejmuje nowo dołączone karty.
 
+Licznik „Szperacz: ukryto N ogłoszeń” (prawy dolny róg) liczy karty pasujące do ukrytych kategorii — tymi samymi selektorami `:has()`, których używa reguła CSS. `MutationObserver` w [`content.js`](content.js) aktualizuje go przy każdej zmianie listy, także gdy OLX doładuje kolejne karty podczas przewijania.
+
 ### Decyzje projektowe
 
-- **Skrypt działa na całym `olx.pl`, a nie tylko na `/oddam-za-darmo/`.** Gdyby tak nie było, po wejściu na „Oddam za darmo” z innej podstrony OLX (bez pełnego przeładowania) skryptu by nie było i filtr nie działałby do odświeżenia karty. Sam filtr włącza się tylko wtedy, gdy adres zaczyna się od `/oddam-za-darmo/`, i reaguje na zmianę podstrony w locie.
+- **Skrypt działa na całym `olx.pl`, a nie tylko na `/oddam-za-darmo/`.** Gdyby tak nie było, po wejściu na „Oddam za darmo” z innej podstrony OLX (bez pełnego przeładowania) skryptu by nie było i filtr nie działałby do odświeżenia karty. Sam filtr włącza się tylko wtedy, gdy adres to `/oddam-za-darmo/` albo `/<miasto|fraza>/oddam-za-darmo/`, i reaguje na zmianę podstrony w locie.
+- **Jeden opcjonalny segment przed kategorią.** `FREE_PATH` w [`content.js`](content.js) dopuszcza też adresy typu `/warszawa/oddam-za-darmo/`; kotwica `^` i prowadzący `/` pilnują, żeby głębsze ścieżki (`/a/b/oddam-za-darmo/`) nie włączały filtra.
 - **Etykiety „Wyróżnione” można tylko ukryć wszystkie naraz.** OLX rysuje je w osobnej warstwie, w pozycjach liczonych z numeru karty na liście — nie da się ich powiązać z konkretną kartą, dlatego po ukryciu kart przy wyłączonym przełączniku zostają w pustych miejscach. Z tego powodu przełącznik jest domyślnie włączony.
 
 ## Znane ograniczenia
 
 - Filtruje tylko kategorie główne. Ukrycie „Zwierząt” usuwa też akcesoria (np. „Buda dla psa”) i rośliny akwariowe. Na stronach sprawdzonych ręcznie 80 z 80 ukrytych to psy i koty.
 - Strona dalej ładuje 52 ogłoszenia na stronę, więc po ukryciu zostaje ich mniej.
-- Działa tylko na adresach zaczynających się od `/oddam-za-darmo/` — warianty z miastem lub frazą wyszukiwania (np. `/warszawa/oddam-za-darmo/`) są na roadmapie.
+- Działa na adresach `/oddam-za-darmo/` oraz z jednym segmentem miasta/frazy przed kategorią (np. `/warszawa/oddam-za-darmo/`); głębsze ścieżki nie są obsługiwane.
 - Lista kategorii w popupie obejmuje te zaobserwowane w „Oddam za darmo”; nie ma tam np. Motoryzacji, bo takie ogłoszenia się nie pojawiły.
 - Jeśli OLX zmieni atrybut `data-cy="l-card"` albo format adresu, filtr przestanie działać.
 - Nazwa i logo nie zostały sprawdzone pod kątem dostępności w Chrome Web Store ani znaku towarowego.
 
 ## Roadmapa
 
-- [ ] Adresy z miastem lub frazą wyszukiwania (np. `/warszawa/oddam-za-darmo/`) — dopisanie w `FREE_PATH` w [`content.js`](content.js) i przetestowanie
+- [x] Adresy z miastem lub frazą wyszukiwania (np. `/warszawa/oddam-za-darmo/`) — `FREE_PATH` w [`content.js`](content.js)
 - [ ] Publikacja w Chrome Web Store
 
 ## Dla dewelopera
@@ -91,8 +95,9 @@ Tym samym mechanizmem ukrywana jest warstwa etykiet „Wyróżnione” (`[data-o
 
 ```
 manifest.json          konfiguracja rozszerzenia (Manifest V3)
-content.js             ukrywa karty na stronie OLX
+content.js             ukrywa karty i pokazuje licznik na stronie OLX
 popup/                 popup z wyborem kategorii (HTML, CSS, JS)
+test/                  testy jednostkowe content.js (node:test, bez zależności)
 icons/szperacz.svg     logo (źródło)
 icons/szperacz-16.svg  uproszczona wersja logo pod 16 px
 icons/icon*.png        ikony 16/48/128 wyrenderowane z SVG
@@ -118,6 +123,14 @@ Kolejną kategorię dopisujesz w `CATEGORIES` w [`popup/popup.js`](popup/popup.j
 ### Workflow po zmianie kodu
 
 Po zmianie kodu kliknij w `chrome://extensions` ikonę odświeżenia przy „Szperacz” i **raz** przeładuj już otwarte karty OLX. Chrome nie podmienia skryptu w kartach otwartych przed odświeżeniem rozszerzenia, więc stare karty przestają reagować na popup. Nowe karty i zmiany ustawień w popupie działają już bez przeładowania.
+
+### Testy
+
+```bash
+node --test
+```
+
+Wymaga Node 18+. Testy nie potrzebują przeglądarki — sprawdzają `FREE_PATH`, `buildCss` i `plural` z [`content.js`](content.js).
 
 ### Ikony
 
