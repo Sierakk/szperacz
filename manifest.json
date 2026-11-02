@@ -19,7 +19,7 @@
         "https://www.olx.pl/*",
         "https://olx.pl/*"
       ],
-      "js": ["content.js"],
+      "js": ["categories.js", "content.js"],
       "run_at": "document_start"
     }
   ]

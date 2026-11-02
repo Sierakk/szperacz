@@ -8,45 +8,53 @@
 </head>
 <body>
   <header>
-    <div class="brand">
-      <img src="../icons/icon48.png" alt="" width="28" height="28">
-      <h1>Szperacz</h1>
-    </div>
-    <label class="switch" title="Włącz lub wyłącz filtrowanie">
-      <input type="checkbox" id="enabled" aria-label="Włącz filtrowanie">
-      <span class="slider"></span>
+    <img src="../icons/szperacz.svg" alt="" width="24" height="24">
+    <h1>Szperacz</h1>
+    <span id="status" class="muted"></span>
+    <label class="switch">
+      <input type="checkbox" id="enabled" role="switch" aria-label="Włącz filtrowanie">
+      <span class="track"><span class="thumb"></span></span>
     </label>
   </header>
 
-  <p class="hint">Pokazuj w „Oddam za darmo” kategorie:</p>
+  <p id="summary" class="muted" aria-live="polite"></p>
 
-  <ul id="categories"></ul>
+  <main id="main">
+    <section>
+      <div class="section-head">
+        <h2>Widoczne kategorie</h2>
+        <span id="count" class="muted"></span>
+        <button type="button" id="all" class="ghost" aria-label="Pokaż wszystkie kategorie">Wszystkie</button>
+        <button type="button" id="none" class="ghost" aria-label="Ukryj wszystkie kategorie">Żadne</button>
+      </div>
+      <ul id="categories"></ul>
+    </section>
 
-  <footer>
-    <button type="button" id="all">Zaznacz wszystkie</button>
-    <button type="button" id="none">Odznacz wszystkie</button>
-  </footer>
+    <div class="card">
+      <label class="row option">
+        <span class="text">
+          <span class="title">Ukryj etykiety „Wyróżnione”</span>
+          <span class="muted">Inaczej zostają w pustych miejscach.</span>
+        </span>
+        <span class="switch">
+          <input type="checkbox" id="hideBadges" role="switch" aria-label="Ukryj etykiety Wyróżnione">
+          <span class="track"><span class="thumb"></span></span>
+        </span>
+      </label>
+      <label class="row option">
+        <span class="text">
+          <span class="title">Licznik ukrytych ogłoszeń</span>
+          <span class="muted">Klik w plakietkę rozwija kategorie.</span>
+        </span>
+        <span class="switch">
+          <input type="checkbox" id="showCounter" role="switch" aria-label="Pokaż licznik ukrytych ogłoszeń">
+          <span class="track"><span class="thumb"></span></span>
+        </span>
+      </label>
+    </div>
+  </main>
 
-  <div class="option">
-    <span id="badges-label">Ukryj etykiety „Wyróżnione”</span>
-    <label class="switch">
-      <input type="checkbox" id="hideBadges" aria-labelledby="badges-label">
-      <span class="slider"></span>
-    </label>
-  </div>
-  <p class="option-hint">Wyłączone: przy ukrytych kategoriach OLX może źle ustawiać etykiety.</p>
-
-  <div class="option">
-    <span id="counter-label">Pokaż licznik ukrytych ogłoszeń</span>
-    <label class="switch">
-      <input type="checkbox" id="showCounter" aria-labelledby="counter-label">
-      <span class="slider"></span>
-    </label>
-  </div>
-  <p class="option-hint">„Szperacz: ukryto N ogłoszeń” w prawym dolnym rogu listy.</p>
-
-  <p class="note">Szperaj tam, gdzie warto.<br>Zmiany działają od razu.</p>
-
+  <script src="../categories.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

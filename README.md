@@ -43,9 +43,12 @@ Kliknij ikonę rozszerzenia na pasku Chrome. W popupie:
 
 - przełącznik w prawym górnym rogu włącza i wyłącza całe filtrowanie,
 - **zaznaczona** kategoria jest pokazywana, **odznaczona** jest ukrywana,
-- „Zaznacz wszystkie” pokazuje wszystko, „Odznacz wszystkie” ukrywa wszystkie znane kategorie,
+- „Wszystkie” pokazuje wszystkie kategorie, „Żadne” ukrywa wszystkie znane,
+- linia pod nagłówkiem pokazuje, ile ogłoszeń na bieżącej karcie jest ukrytych („Ukryto 14 z 52 ogłoszeń na tej stronie”); poza „Oddam za darmo” zamiast niej jest link do tej zakładki,
 - przełącznik „Ukryj etykiety «Wyróżnione»” (domyślnie włączony) usuwa plakietki „Wyróżnione” z listy, niezależnie od wybranych kategorii,
-- przełącznik „Pokaż licznik ukrytych ogłoszeń” (domyślnie włączony) pokazuje w prawym dolnym rogu listy „Szperacz: ukryto N ogłoszeń” — licznik aktualizuje się też przy doładowywaniu kart podczas przewijania.
+- przełącznik „Licznik ukrytych ogłoszeń” (domyślnie włączony) pokazuje w prawym dolnym rogu listy plakietkę „Szperacz ukryto N ogłoszeń” — licznik aktualizuje się też przy doładowywaniu kart podczas przewijania.
+
+**Kliknięcie plakietki rozwija listę kategorii** z liczbą ogłoszeń w każdej z nich na bieżącej stronie. Kategorie można tam włączać i wyłączać bez otwierania popupu (zmiany zapisują się tak samo jak w popupie); `Esc` zwija listę. Gdy nic nie jest ukryte, plakietka zostaje jako sama nazwa „Szperacz” ze strzałką, żeby lista kategorii była zawsze pod ręką.
 
 Domyślnie wszystkie kategorie są zaznaczone (widoczne), więc żeby coś ukryć — odznacz to w popupie.
 
@@ -67,7 +70,9 @@ Każdy link do ogłoszenia na OLX zawiera ID kategorii głównej, np. `...-CID10
 
 Tym samym mechanizmem ukrywana jest warstwa etykiet „Wyróżnione” (`[data-olx-listing-item-badge-portal-root]`), jeśli przełącznik w popupie jest włączony. OLX przechodzi między stronami wyników bez przeładowania, a wstrzyknięty CSS od razu obejmuje nowo dołączone karty.
 
-Licznik „Szperacz: ukryto N ogłoszeń” (prawy dolny róg) liczy karty pasujące do ukrytych kategorii — tymi samymi selektorami `:has()`, których używa reguła CSS. `MutationObserver` w [`content.js`](content.js) aktualizuje go przy każdej zmianie listy, także gdy OLX doładuje kolejne karty podczas przewijania.
+Licznik (prawy dolny róg) liczy karty w każdej kategorii — tymi samymi selektorami `:has()`, których używa reguła CSS — i sumuje te z ukrytych kategorii. `MutationObserver` w [`content.js`](content.js) aktualizuje go przy każdej zmianie listy, także gdy OLX doładuje kolejne karty podczas przewijania. Plakietka jest wstrzykiwana w Shadow DOM, więc style OLX jej nie ruszają.
+
+Linię „Ukryto N z M ogłoszeń na tej stronie” w popupie zasila `chrome.tabs.sendMessage`: popup pyta `content.js` aktywnej karty o liczby ogłoszeń w kategoriach i sam sumuje te ukryte. Nie wymaga to żadnych dodatkowych uprawnień; na karcie bez `content.js` (poza `olx.pl`) wiadomość się nie powiedzie i popup pokazuje stan „poza Oddam za darmo”.
 
 ### Decyzje projektowe
 
@@ -95,6 +100,7 @@ Licznik „Szperacz: ukryto N ogłoszeń” (prawy dolny róg) liczy karty pasuj
 ```
 manifest.json          konfiguracja rozszerzenia (Manifest V3)
 content.js             ukrywa karty i pokazuje licznik na stronie OLX
+categories.js          lista kategorii wspólna dla popupu i content.js
 popup/                 popup z wyborem kategorii (HTML, CSS, JS)
 test/                  testy jednostkowe content.js (node:test, bez zależności)
 icons/szperacz.svg     logo (źródło)
@@ -117,7 +123,7 @@ Znane kategorie:
 | 628 | Dom i Ogród | 4042 | Antyki i Kolekcje |
 |     |             | 5216 | Budowa i Remont   |
 
-Kolejną kategorię dopisujesz w `CATEGORIES` w [`popup/popup.js`](popup/popup.js) — ID znajdziesz w adresie ogłoszenia (fragment `-CID<liczba>-`).
+Kolejną kategorię dopisujesz w `CATEGORIES` w [`categories.js`](categories.js) — ID znajdziesz w adresie ogłoszenia (fragment `-CID<liczba>-`).
 
 ### Workflow po zmianie kodu
 
@@ -126,10 +132,10 @@ Po zmianie kodu kliknij w `chrome://extensions` ikonę odświeżenia przy „Szp
 ### Testy
 
 ```bash
-node --test
+node --test test/*.test.js
 ```
 
-Wymaga Node 18+. Testy nie potrzebują przeglądarki — sprawdzają `FREE_PATH`, `buildCss` i `plural` z [`content.js`](content.js).
+Wymaga Node 18+. Testy nie potrzebują przeglądarki — sprawdzają `FREE_PATH`, `buildCss` i `plural` z [`content.js`](content.js) oraz `CATEGORIES` i `sumHidden` z [`categories.js`](categories.js).
 
 ### Ikony
 
